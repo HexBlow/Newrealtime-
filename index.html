@@ -619,4 +619,99 @@
                     orderListEl.appendChild(orderItem);
                 });
             } else {
-                orderListEl.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No orders ye
+                orderListEl.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No orders yet</p>';
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notificationEl.textContent = message;
+            notificationEl.style.backgroundColor = type === 'success' 
+                ? 'var(--success-color)' 
+                : 'var(--error-color)';
+            notificationEl.classList.add('show-notification');
+            setTimeout(() => {
+                notificationEl.classList.remove('show-notification');
+            }, 3000);
+        }
+
+        // Event listeners
+        copyBtn.addEventListener('click', () => {
+            referralLinkEl.select();
+            document.execCommand('copy');
+            showNotification('Referral link copied!');
+        });
+
+        refreshBtn.addEventListener('click', () => {
+            fetchUserData();
+            showNotification('Balance refreshed!');
+        });
+
+        redeemBtn.addEventListener('click', async () => {
+            const amount = parseInt(redeemAmountEl.value);
+            const username = usernameEl.value.trim();
+            
+            if (!amount || amount <= 0) {
+                showNotification('Please enter a valid amount', 'error');
+                return;
+            }
+            
+            if (!username) {
+                showNotification('Please enter your Telegram username', 'error');
+                return;
+            }
+            
+            await placeOrder(amount, username);
+        });
+
+        // Tab switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize with some demo referrals if new user
+            const userId = tg.initDataUnsafe.user?.id;
+            if (userId && !backend.users[userId]) {
+                // Add some demo data for new users
+                backend.initUser(userId);
+                backend.users[userId].balance = 15;
+                backend.users[userId].points = 5;
+                backend.users[userId].totalRefers = 5;
+                backend.users[userId].activeRefers = 5;
+            }
+            
+            fetchUserData();
+            
+            // Set up periodic refresh (every 2 minutes)
+            setInterval(fetchUserData, 120000);
+        });
+
+        // Handle Telegram events
+        tg.onEvent('viewportChanged', () => {
+            if (tg.isExpanded) {
+                tg.expand();
+            }
+        });
+
+        // For demo purposes - simulate referral
+        // In a real app, this would be handled when users click referral links
+        if (window.location.search.includes('ref=')) {
+            const refUserId = window.location.search.split('ref=')[1].split('&')[0];
+            if (refUserId) {
+                const result = backend.addReferral(refUserId);
+                if (result.starsAdded > 0) {
+                    console.log(`User ${refUserId} earned ${result.starsAdded} stars from referral`);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
