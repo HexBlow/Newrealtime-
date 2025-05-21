@@ -483,7 +483,7 @@
                         points: 0,
                         totalRefers: 0,
                         activeRefers: 0,
-                        referralLink: `https://t.me/${BOT_USERNAME}?start=ref${userId}`,
+                        referralLink: `https://t.me/VenceStarBot?start=ref${userId}`,
                         orders: []
                     };
                     this.saveData();
@@ -499,7 +499,7 @@
                 const user = this.initUser(userId);
                 
                 if (amount > user.balance) {
-                    return { success: false, message: "Insufficient balance" };
+                    return { success: false, message: "You Don't Have Enough Balance" };
                 }
                 
                 const orderId = Date.now().toString();
