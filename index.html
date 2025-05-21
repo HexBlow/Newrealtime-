@@ -689,8 +689,8 @@
             const amount = parseInt(redeemAmountEl.value);
             const username = usernameEl.value.trim();
             
-            if (!amount || amount <= 0) {
-                showNotification('Please enter a valid amount', 'error');
+            if (!amount || amount <= 15) {
+                showNotification('Minimum Withdrawal Is 15 Starts', 'error');
                 return;
             }
             
