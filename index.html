@@ -1,10 +1,437 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- [Keep all the previous CSS and meta tags] -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Exchange Program</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0088cc;
+            --secondary-color: #17212b;
+            --accent-color: #2b5278;
+            --text-color: #e1e1e1;
+            --text-secondary: #a8a8a8;
+            --background: #0e1621;
+            --card-bg: #17212b;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --error-color: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .user-balance {
+            background-color: var(--card-bg);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .balance-stars {
+            color: #f1c40f;
+            font-weight: 600;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .progress-container {
+            margin-bottom: 25px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: var(--secondary-color);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+
+        .referral-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background-color: var(--secondary-color);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .referral-link-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .referral-link {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--secondary-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .copy-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #0077b3;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #1e2a38;
+        }
+
+        .redeem-section {
+            margin-top: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--secondary-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        .stars-rate {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .stars-rate span {
+            color: #f1c40f;
+            font-weight: 600;
+        }
+
+        .order-history {
+            margin-top: 30px;
+        }
+
+        .order-item {
+            background-color: var(--secondary-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-details {
+            flex: 1;
+        }
+
+        .order-amount {
+            font-weight: 600;
+            color: #f1c40f;
+        }
+
+        .order-status {
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            background-color: var(--accent-color);
+        }
+
+        .status-pending {
+            background-color: var(--warning-color);
+            color: #000;
+        }
+
+        .status-completed {
+            background-color: var(--success-color);
+            color: #fff;
+        }
+
+        .status-failed {
+            background-color: var(--error-color);
+            color: #fff;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--success-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .show-notification {
+            opacity: 1;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .referral-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- [Keep all the previous HTML structure] -->
+    <div class="container">
+        <header>
+            <div class="logo">Star Exchange</div>
+            <div class="user-balance">
+                <span>Balance:</span>
+                <span class="balance-stars" id="balance">0 ★</span>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="earn">Earn Stars</div>
+            <div class="tab" data-tab="redeem">Redeem Stars</div>
+            <div class="tab" data-tab="history">Order History</div>
+        </div>
+
+        <div class="tab-content active" id="earn-tab">
+            <div class="card">
+                <h3 class="card-title">Your Referral Progress</h3>
+                
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>Points: <span id="current-points">0</span>/15</span>
+                        <span>30 ★</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="referral-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-refers">0</div>
+                        <div class="stat-label">Total Referrals</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="active-refers">0</div>
+                        <div class="stat-label">Active Referrals</div>
+                    </div>
+                </div>
+
+                <div class="referral-link-container">
+                    <input type="text" class="referral-link" id="referral-link" value="Loading..." readonly>
+                    <button class="copy-btn" id="copy-btn">Copy</button>
+                </div>
+
+                <button class="btn" id="refresh-btn">Refresh Balance</button>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">How It Works</h3>
+                <ul style="padding-left: 20px; margin-bottom: 15px;">
+                    <li>1 Referral = 1 Point</li>
+                    <li>15 Points = 30 Stars</li>
+                    <li>Points reset after reaching 15</li>
+                    <li>Stars are added to your balance automatically</li>
+                </ul>
+                <p style="font-size: 14px; color: var(--text-secondary);">Note: Only active referrals count (users who joined and stayed)</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="redeem-tab">
+            <div class="card">
+                <h3 class="card-title">Redeem Your Stars</h3>
+                
+                <div class="stars-rate">
+                    Your current rate: <span>15 Points = 30 ★</span>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Amount of Stars to Redeem</label>
+                    <input type="number" class="input-field" id="redeem-amount" placeholder="Enter amount">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Your Telegram Username</label>
+                    <input type="text" class="input-field" id="username" placeholder="@username">
+                </div>
+
+                <button class="btn" id="redeem-btn">Place Order</button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="history-tab">
+            <div class="card">
+                <h3 class="card-title">Your Order History</h3>
+                
+                <div id="order-list">
+                    <p style="text-align: center; color: var(--text-secondary);">No orders yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">Copied to clipboard!</div>
 
     <script>
         // Telegram Web App initialization
@@ -15,17 +442,22 @@
         const BOT_USERNAME = "YourBotUsername"; // Change to your actual bot username
         const ADMIN_USERNAME = "NexWon"; // Your Telegram username for order notifications
         
-        // User data with initial values
-        let userData = {
-            balance: 0,
-            points: 0,
-            totalRefers: 0,
-            activeRefers: 0,
-            referralLink: "",
-            orders: []
-        };
-
-        // [Keep all previous DOM element selectors]
+        // DOM elements
+        const balanceEl = document.getElementById('balance');
+        const currentPointsEl = document.getElementById('current-points');
+        const progressFillEl = document.getElementById('progress-fill');
+        const totalRefersEl = document.getElementById('total-refers');
+        const activeRefersEl = document.getElementById('active-refers');
+        const referralLinkEl = document.getElementById('referral-link');
+        const copyBtn = document.getElementById('copy-btn');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const redeemAmountEl = document.getElementById('redeem-amount');
+        const usernameEl = document.getElementById('username');
+        const redeemBtn = document.getElementById('redeem-btn');
+        const orderListEl = document.getElementById('order-list');
+        const notificationEl = document.getElementById('notification');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
 
         // Persistent storage using localStorage
         const storage = {
@@ -238,7 +670,57 @@
             }
         }
 
-        // [Keep all other helper functions and event listeners]
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notificationEl.textContent = message;
+            notificationEl.style.backgroundColor = type === 'success' 
+                ? 'var(--success-color)' 
+                : 'var(--error-color)';
+            notificationEl.classList.add('show-notification');
+            setTimeout(() => {
+                notificationEl.classList.remove('show-notification');
+            }, 3000);
+        }
+
+        // Event listeners
+        copyBtn.addEventListener('click', () => {
+            referralLinkEl.select();
+            document.execCommand('copy');
+            showNotification('Referral link copied!');
+        });
+
+        refreshBtn.addEventListener('click', () => {
+            fetchUserData();
+            showNotification('Balance refreshed!');
+        });
+
+        redeemBtn.addEventListener('click', async () => {
+            const amount = parseInt(redeemAmountEl.value);
+            const username = usernameEl.value.trim();
+            
+            if (!amount || amount <= 0) {
+                showNotification('Please enter a valid amount', 'error');
+                return;
+            }
+            
+            if (!username) {
+                showNotification('Please enter your Telegram username', 'error');
+                return;
+            }
+            
+            await placeOrder(amount, username);
+        });
+
+        // Tab switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+            });
+        });
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
@@ -273,6 +755,13 @@
                         fetchUserData();
                     }
                 }
+            }
+        });
+
+        // Handle Telegram events
+        tg.onEvent('viewportChanged', () => {
+            if (tg.isExpanded) {
+                tg.expand();
             }
         });
     </script>
