@@ -348,14 +348,13 @@
         </header>
 
         <div class="tabs">
-            <div class="tab active" data-tab="earn">Earn Stars</div>
-            <div class="tab" data-tab="redeem">Redeem Stars</div>
-            <div class="tab" data-tab="history">Order History</div>
+            <div class="tab active" data-tab="earn">Earn</div>
+            <div class="tab" data-tab="redeem">Withdrawal</div>
+            <div class="tab" data-tab="history">History</div>
         </div>
 
         <div class="tab-content active" id="earn-tab">
             <div class="card">
-                <h3 class="card-title">Your Referral Progress</h3>
                 
                 <div class="progress-container">
                     <div class="progress-info">
@@ -385,14 +384,6 @@
 
                 <button class="btn" id="refresh-btn">Refresh Balance</button>
             </div>
-
-            <div class="card">
-                <h3 class="card-title">How It Works</h3>
-                <ul style="padding-left: 20px; margin-bottom: 15px;">
-                    <li>1 Referral = 1 Point</li>
-                    <li>15 Points = 30 Stars</li>
-                    <li>Points reset after reaching 15</li>
-                    <li>Stars are added to your balance automatically</li>
                 </ul>
                 <p style="font-size: 14px; color: var(--text-secondary);">Note: Only active referrals count (users who joined and stayed)</p>
             </div>
@@ -439,7 +430,7 @@
         tg.expand();
         
         // Configuration - SET THESE VALUES
-        const BOT_USERNAME = "YourBotUsername"; // Change to your actual bot username
+        const BOT_USERNAME = "VenceStarBot"; // Change to your actual bot username
         const ADMIN_USERNAME = "NexWon"; // Your Telegram username for order notifications
         
         // DOM elements
